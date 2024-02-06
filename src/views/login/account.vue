@@ -4,12 +4,12 @@
     <div class="login_box">
       <el-form :model="loginForm" :rules="loginFormRules" ref="loginForms" hide-required-asterisk>
         <el-form-item prop="phone" label="手机号">
-          <el-input class="custom-input" type="text" placeholder="请输入电话" v-model="loginForm.phone"></el-input>
+          <el-input class="custom-input" type="text" placeholder="请输入电话" v-model="loginForm.telephone"></el-input>
         </el-form-item>
         <el-form-item class="input_box" prop="passwd" label="密&nbsp;&nbsp;&nbsp;码">
           <!-- <svg-icon name="cipher" style="padding-right: 8px; margin-top: 15px; font-weight: bold;" width="22px"
             height="22px"></svg-icon> -->
-          <el-input class="custom-input" placeholder="请输入密码" type="passwd" show-password v-model="loginForm.passwd">
+          <el-input class="custom-input" placeholder="请输入密码" type="passwd" show-password v-model="loginForm.password">
           </el-input>
         </el-form-item>
       </el-form>
@@ -30,41 +30,47 @@ let userInfo = useUserInfo()
 const loginForms = ref()
 // 使用 ref 创建响应式对象
 const loginForm = reactive({
-  phone: '',
-  passwd: '',
+  telephone: '',
+  password: '',
 })
 
 // 账号密码登录表单的校验规则
 const loginFormRules = {
-  phone: [
+  telephone: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
     { pattern: /^1[3456789]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' },
   ],
-  passwd: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 }
 
 // 提交账号密码登录表单
 const onSignIn = async () => {
-  loginForms.value.validate(async(valid:any)=>{
-        if(valid){
-          let result = await userInfo.loginIn(loginForm.phone, loginForm.passwd)
-            // 登录成功之后存储token
-            if (result.code === '200') {
-                localStorage.setItem('token', result.data.token)
-                router.push({ path: '/system/usermanager' })
-                ElMessage({
-                  message: result.msg,
-                  type: 'success',
-                })
-              } else {
-                ElMessage({
-                  message: result.msg,
-                  type: 'error',
-                })
-              }
-          }
-    })
+  loginForms.value.validate(async (valid: any) => {
+    if (valid) {
+      let result = await userInfo.loginIn(loginForm.telephone, loginForm.password)
+      console.log('account.vue', result);
+
+      // 登录成功之后存储token
+      if (result.code === '200') {
+        localStorage.setItem('token', result.data.token)
+        // 当我点击登录之后进行路由跳转的时候携带对应的参数 
+        router.push({ path: '/system/usermanager' })
+        console.log('跳转页面成功', loginForm.telephone);
+
+        ElMessage({
+          message: result.msg,
+          type: 'success',
+        })
+      } else {
+        ElMessage({
+          message: result.msg,
+          type: 'error',
+        })
+      }
+    }
+  })
 }
+
 </script>
 
 <style lang="scss" scoped>

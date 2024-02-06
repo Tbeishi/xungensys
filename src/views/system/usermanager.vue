@@ -126,3 +126,17 @@ onMounted(() => {
 //   bottom: 10px;
 // }
 </style>
+<style lang="scss" scoped>
+@media screen and (max-width: 460px) {
+  .el-button {
+    height: 30px;
+    width: 50px;
+    font-size: 13px;
+  }
+}
+// .el-pagination.is-background{
+//   position: absolute;
+//   margin-top: 30px;
+//   bottom: 10px;
+// }
+</style>
