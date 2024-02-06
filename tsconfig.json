@@ -27,7 +27,7 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue",
+    "src/**/*.vue"
   ],
   // "noImplicitAny": true,
   // "suppressImplicitAnyIndexErrors": true,

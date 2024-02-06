@@ -8,7 +8,8 @@ import {
 
 export const usePersonMessage = defineStore('PerMessage', {
   state: () => {
-    return {}
+    return {
+    }
   },
 
   actions: {
@@ -18,7 +19,7 @@ export const usePersonMessage = defineStore('PerMessage', {
       return result
     },
     // 增加人员信息
-    async addPer(data: any) {
+    async addPer(data:any) {
       let result = await reqAddPer(data)
       return result
     },
@@ -28,7 +29,7 @@ export const usePersonMessage = defineStore('PerMessage', {
       return result
     },
     // 改变人员信息
-    async changePer(data: any) {
+    async changePer(data:any) {      
       let result = await reqChange(data)
       return result
     },

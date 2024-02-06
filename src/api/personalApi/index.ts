@@ -18,6 +18,6 @@ export const reqAddPer = (data:any) => {
 
 // 删除角色信息
 export const reqDelRole = (userid: any) => {
-const data = { userid }
+ const data = { userid }
  return requests.delete<any, any>(API.GET_ZHUHU,{ data })
 }

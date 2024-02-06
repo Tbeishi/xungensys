@@ -107,3 +107,5 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 </style>
 
 
+
+<style lang="scss" scoped></style>

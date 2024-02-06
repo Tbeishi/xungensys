@@ -1,6 +1,5 @@
 // 巡检点的相关接口
 import requests from '@/utils/request'
-import axios from 'axios'
 enum API {
   GET_XUNJIANDIAN = '/xungeng/xunjiandian',
 }

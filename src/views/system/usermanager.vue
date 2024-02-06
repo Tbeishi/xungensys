@@ -24,18 +24,14 @@
       </el-table>
     </div>
     <!-- 传递数据 -->
-    <addPer ref="roleDialogRef" @addPer-click="transmitData" />
-    <changePer ref="changeDialogRef" @changePer-click="transmitData" />
+    <addPer ref="roleDialogRef" @addPer-click="transmitData" :roleList="roleList" />
+    <changePer ref="changeDialogRef" @changePer-click="transmitData" :roleList="roleList"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-interface TableDataItem {
-  name: string;
-  tele: string;
-  role: string
-}
+
 // 通过仓库实现添加 删除 修改功能
 import { usePersonMessage } from "@/store/modules/personal"
 let PersonMessage = usePersonMessage()
@@ -43,10 +39,11 @@ let PersonMessage = usePersonMessage()
 import addPer from './addPer.vue'
 import changePer from './changePer.vue'
 import { onMounted, ref } from 'vue'
-import { useRoleInfo } from '@/store/modules/role'
+import { useRoleInfo } from '@/store/modules/rolemanage'
 const RoleStore = useRoleInfo()
 // 定义变量内容
 const roleDialogRef = ref();
+const roleList = ref() //角色名称列表
 const changeDialogRef = ref()   // 改变数据的响应式弹窗组件
 //  定义响应式的数据---去存储服务器返回的数据在模版当中进行展示
 // 存储人员管理的用户信息---数组
@@ -68,9 +65,9 @@ const change = () => {
   changeDialogRef.value.getData(curData.value)
   changeDialogRef.value.openChangeDialog();
 };
-const selectedRows = ref<TableDataItem[]>([]);
+const selectedRows = ref();
 
-const onSelectionChange = (selection: TableDataItem[]) => {
+const onSelectionChange = (selection: any) => {
   selectedRows.value = selection;
   isButtonDisabled.value = selection.length === 0;
   const data = selection[selection.length - 1]
@@ -88,12 +85,11 @@ const del = async () => {
 // 获取所有的用户信息
 const getHasUser = async () => {
   let result: any = (await PersonMessage.getPersonal()).data
-  console.log(result);
-  const roleList = (await RoleStore.reqRole()).data.info_list
+  roleList.value = (await RoleStore.getRole()).data.info_list
   result.forEach((info:any)=>{
     if(info.roleid){
       info.roleid = info.roleid.map((item:any) => {
-      const res = roleList.find((e:any) => e.roleid === item)
+      const res = roleList.value.find((e:any) => e.roleid === item)
       if(res) {
         return res['rolename']
         }
@@ -116,6 +112,20 @@ onMounted(() => {
 
 </script>
 
+<style lang="scss" scoped>
+@media screen and (max-width: 460px) {
+  .el-button {
+    height: 30px;
+    width: 50px;
+    font-size: 13px;
+  }
+}
+// .el-pagination.is-background{
+//   position: absolute;
+//   margin-top: 30px;
+//   bottom: 10px;
+// }
+</style>
 <style lang="scss" scoped>
 @media screen and (max-width: 460px) {
   .el-button {

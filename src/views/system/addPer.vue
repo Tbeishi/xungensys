@@ -58,12 +58,11 @@
 import { reactive, ref, defineExpose, defineEmits } from 'vue';
 import { ElMessage } from "element-plus";
 import { usePersonMessage } from "@/store/modules/personal"
-import { useRoleInfo } from '@/store/modules/role'
-let PersonMessage = usePersonMessage()
+import { useRoleInfo } from '@/store/modules/rolemanage'
 const RoleStore = useRoleInfo()
+let PersonMessage = usePersonMessage()
 const emit = defineEmits(['addPer-click'])
 const dialogs = ref(false)
-const roleList = ref()
 const Registerform = ref()
 const form = reactive({
   telephone: '',
@@ -71,6 +70,8 @@ const form = reactive({
   departmentid:null,
   roleid:null
 })
+
+defineProps(["roleList"])
 
 const checkTele = (rule:any,value:any,cb:any)=>{
     const rules = /^(13[0-9]|14[1579]|15[0-3,5-9]|16[6]|17[0123456789]|18[0-9]|19[89])\d{8}$/
@@ -96,17 +97,6 @@ const refRuler = ref({
 
 // 打开弹窗
 const openDialog = async () => {
-  let result
-  try{
-    result = (await RoleStore.reqRole()).data.info_list
-    }
-    catch(e){
-        console.log(e);
-        
-    }
-    console.log(result);
-    
-  roleList.value = result
   dialogs.value = true;
 };
 // 关闭弹窗

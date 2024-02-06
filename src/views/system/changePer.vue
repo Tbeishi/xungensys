@@ -25,19 +25,19 @@
                         />
                     </el-select>
             </el-form-item>
-            <el-form-item label="用户权限" prop="roleid">
+            <el-form-item label="用户角色" prop="roleid">
                   <el-select
                         v-model="form.roleid"
                         class="m-2"
-                        placeholder="请选择用户权限"
+                        placeholder="请选择用户角色"
                         style="width: 100%"
                         multiple
                     >
                         <el-option
-                        v-for="item in [1000,2000,3000,4000,5000,6000,7000]"
+                        v-for="item in roleList"
                         :key="item"
-                        :label="item"
-                        :value="item"
+                        :label="item.rolename"
+                        :value="item.roleid"
                         />
                     </el-select>
             </el-form-item>
@@ -57,7 +57,9 @@ import { reactive, ref, defineExpose, defineEmits } from 'vue';
 const emit = defineEmits(['changePer-click'])
 import { ElMessage } from "element-plus";
 import { usePersonMessage } from "@/store/modules/personal"
-
+import { useRoleInfo } from '@/store/modules/rolemanage'
+const RoleStore = useRoleInfo()
+defineProps(["roleList"])
 let PersonMessage = usePersonMessage()
 const addDialogs = ref(false)
 const Registerform = ref()
@@ -90,12 +92,17 @@ const refRuler = ref({
   departmentid:[{ required: true, message: '部门不能为空', trigger: 'blur' }],
 })
 
-const getData = (data: any) => {
+const getData = async (data: any) => {
     form.telephone = data.telephone || '',   // 将接受过来的数据展示在页面上--双向绑定
     form.username = data.username || '',
-    form.roleid = data.roleid || null
     form.departmentid = data.departmentid || null
     form.userid = data.userid
+    let roleList = data.roleid
+    const list = (await RoleStore.getRole()).data.info_list
+    roleList =  roleList.map((item:any)=>
+      list.find((info:any)=>info.rolename === item).roleid
+    )
+    form.roleid = roleList || null
 }
 
 // 打开弹窗

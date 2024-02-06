@@ -103,10 +103,5 @@ export default {
   ::v-deep(.el-sub-menu__icon-arrow) {
     display: none;
   }
-
-  ::v-deep(.el-sub-menu .el-menu-item) {
-    justify-content: center;
-    padding: 0 !important;
-  }
 }
 </style>
