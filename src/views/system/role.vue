@@ -40,19 +40,13 @@ const isButtonDisabled = ref(true)  // 默认处于禁用状态
 const roleData = ref() //角色名称列表
 const authDia = ref()
 const getRoles = async ()=>{
-  let result
-  try{
-    result = await RoleStore.getRole()
-    }
-    catch(e){
-        console.log(e);
-    }
+  const result = await RoleStore.getRole()
   const data = result.data.info_list
   const menu = localStorage.getItem('routes') ? JSON.parse(localStorage.getItem('routes')||'') : (await silderStore.getRoutes()).data.info_list
   data.forEach((info:any)=>{
     if(info.menuid){
       info.menuid = info.menuid.map((item:any) => {
-      const res = menu.find((e:any) => e.selfid === item)
+      const res = findMenu(menu,item)
       if(res) {
         return res['name']
         }
@@ -60,6 +54,23 @@ const getRoles = async ()=>{
     }
   })
   roleData.value = data
+}
+
+const findMenu = (list:any,para:any)=>{
+  let flag
+  list.find((e:any) => {
+    if(e.selfid === para) {
+      flag = e
+      return e
+    }
+    else{
+      if(e.childs && e.childs.length > 0){
+        flag = findMenu(e.childs,para)
+        return findMenu(e.childs,para)
+      }
+    }
+  })
+  return flag
 }
 
 // 点击新增
