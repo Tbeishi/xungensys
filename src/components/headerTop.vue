@@ -7,7 +7,8 @@
     <div class="homeRight">
       <el-dropdown>
         <el-button type="primary" class="btns" style="background-color: #ff0000; margin-left:20px">
-          {{ userInfo.telephone }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+          <!-- <el-icon class="el-icon--right"><arrow-down /></el-icon> -->
+          个人中心
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>

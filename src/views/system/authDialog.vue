@@ -139,7 +139,7 @@
       if(e) {
         selected.selfid = item.selfid;
         const farIndex = selected.farIndex
-        if(farIndex){
+        if(farIndex || farIndex === 0){
           menuList.value[farIndex].name = selected.farName
           menuList.value[farIndex].selfid = item.pid
         }

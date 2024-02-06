@@ -24,8 +24,8 @@
       </el-table>
     </div>
     <!-- 传递数据 -->
-    <addPer ref="roleDialogRef" @addPer-click="transmitData" :roleList="roleList" />
-    <changePer ref="changeDialogRef" @changePer-click="transmitData" :roleList="roleList"/>
+    <addPer ref="roleDialogRef" @addPer-click="transmitData" :roleList="roleList" :depList="depList"/>
+    <changePer ref="changeDialogRef" @changePer-click="transmitData" :roleList="roleList" :depList="depList"/>
   </div>
 </template>
 
@@ -40,10 +40,13 @@ import addPer from './addPer.vue'
 import changePer from './changePer.vue'
 import { onMounted, ref } from 'vue'
 import { useRoleInfo } from '@/store/modules/rolemanage'
+import { useDepInfo } from '@/store/modules/depmanager'
+const depInfo = useDepInfo()
 const RoleStore = useRoleInfo()
 // 定义变量内容
 const roleDialogRef = ref();
 const roleList = ref() //角色名称列表
+const depList = ref() //部门名称列表
 const changeDialogRef = ref()   // 改变数据的响应式弹窗组件
 //  定义响应式的数据---去存储服务器返回的数据在模版当中进行展示
 // 存储人员管理的用户信息---数组
@@ -51,7 +54,7 @@ let perMessage = ref<any>([])
 const curData = ref()
 // 添加角色
 // 打开新增角色弹窗
-const onOpenAddRole = (type: string) => {
+const onOpenAddRole = async (type: string) => {
   roleDialogRef.value.openDialog(type);
 };
 const searchValue = ref('') //搜索值
@@ -86,12 +89,21 @@ const del = async () => {
 const getHasUser = async () => {
   let result: any = (await PersonMessage.getPersonal()).data
   roleList.value = (await RoleStore.getRole()).data.info_list
+  depList.value = (await depInfo.getDep()).data.info_list
   result.forEach((info:any)=>{
     if(info.roleid){
       info.roleid = info.roleid.map((item:any) => {
       const res = roleList.value.find((e:any) => e.roleid === item)
       if(res) {
         return res['rolename']
+        }
+      })
+    }
+    if(info.departmentid){
+      info.departmentid = info.departmentid.map((item:any) => {
+      const res = depList.value.find((e:any) => e.departmentid === item)
+      if(res) {
+        return res['departmentname']
         }
       })
     }

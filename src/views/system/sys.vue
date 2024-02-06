@@ -1,8 +1,7 @@
 <!-- 系统配置 -->
 <template>
   <div class="system">
-    系统配置
-    <el-card class="box-card">
+    <!-- <el-card class="box-card"> -->
       <el-form :model="form" label-width="120px" :rules="ruler" ref="Registerform">
         <el-form-item label="系统配置名称" prop="sysinfo">
           <el-input v-model="form.sysinfo" />
@@ -19,7 +18,7 @@
 
         </el-form-item>
       </el-form>
-    </el-card>
+    <!-- </el-card> -->
   </div>
 </template>
 
@@ -27,8 +26,9 @@
 import { UploadProps, ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 // import type { UploadProps, ElMessage } from 'element-plus'
-
-import { ref, reactive } from 'vue'
+import { useConfigInfo } from '@/store/modules/sysconfig'
+import { ref, reactive, onMounted } from 'vue'
+const ConfigStore = useConfigInfo()
 let form = reactive({
   sysinfo: "",
   url: ""
@@ -48,64 +48,36 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
   imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 }
 
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('Avatar picture must be JPG format!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('Avatar picture size can not exceed 2MB!')
-    return false
-  }
-  return true
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (file) => {
+  const isImage = file.type.startsWith('image/');
+      if (!isImage) {
+        ElMessage.error('只能上传图片!')
+         return false
+      }
+      if(file.size / 1024 / 1024 > 2) {
+        ElMessage.error('图片大小不能超过2MB!')
+        return false
+      }
+      imageUrl.value = URL.createObjectURL(file);
+      console.log(imageUrl.value);
+      ElMessage.success('更换头像成功!')
+      return isImage;
 }
+
+onMounted(async ()=>{
+   const result = (await ConfigStore.getConfig()).data
+   form.sysinfo = result.sysinfo
+   console.log(result);
+   imageUrl.value = result.url
+})
 </script>
 
 <style lang="scss" scoped>
 .system {
   display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
   width: 100%;
-
-  .box-card {
-    width: 480px;
-    height: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 }
 </style>
-<style scoped>
-.avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-</style>
-
-<style>
-.avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-}
-
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
-}
-
-.el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  text-align: center;
-}
-</style>
-
-
-
-<style lang="scss" scoped></style>

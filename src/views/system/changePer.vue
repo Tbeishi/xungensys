@@ -18,10 +18,10 @@
                         multiple
                     >
                         <el-option
-                        v-for="item in [1,2,3,4,5,6]"
+                        v-for="item in depList"
                         :key="item"
-                        :label="item"
-                        :value="item"
+                        :label="item.departmentname"
+                        :value="item.departmentid"
                         />
                     </el-select>
             </el-form-item>
@@ -58,8 +58,10 @@ const emit = defineEmits(['changePer-click'])
 import { ElMessage } from "element-plus";
 import { usePersonMessage } from "@/store/modules/personal"
 import { useRoleInfo } from '@/store/modules/rolemanage'
+import { useDepInfo } from '@/store/modules/depmanager'
+const depInfo = useDepInfo()
 const RoleStore = useRoleInfo()
-defineProps(["roleList"])
+defineProps(["roleList","depList"])
 let PersonMessage = usePersonMessage()
 const addDialogs = ref(false)
 const Registerform = ref()
@@ -95,14 +97,19 @@ const refRuler = ref({
 const getData = async (data: any) => {
     form.telephone = data.telephone || '',   // 将接受过来的数据展示在页面上--双向绑定
     form.username = data.username || '',
-    form.departmentid = data.departmentid || null
     form.userid = data.userid
     let roleList = data.roleid
+    let depList = data.departmentid
     const list = (await RoleStore.getRole()).data.info_list
+    const list2 = (await depInfo.getDep()).data.info_list
     roleList =  roleList.map((item:any)=>
       list.find((info:any)=>info.rolename === item).roleid
     )
+    depList = depList.map((item:any)=>
+      list2.find((info:any)=>info.departmentname === item).departmentid
+    )
     form.roleid = roleList || null
+    form.departmentid = depList || null
 }
 
 // 打开弹窗
@@ -123,6 +130,8 @@ const onSubmitChange = async () => {
   Registerform.value.validate(async(valid:any)=>{
         if(valid){
           let result: any = await PersonMessage.changePer(form)
+          console.log(result);
+          console.log(form.roleid);
           // 这里显示undefined ？？？
             ElMessage({
               message: result ? result.msg : '更新失败',

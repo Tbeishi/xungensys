@@ -18,10 +18,10 @@
                         multiple
                     >
                         <el-option
-                        v-for="item in [1,2,3,4,5,6]"
+                        v-for="item in depList"
                         :key="item"
-                        :label="item"
-                        :value="item"
+                        :label="item.departmentname"
+                        :value="item.departmentid"
                         />
                     </el-select>
             </el-form-item>
@@ -71,7 +71,7 @@ const form = reactive({
   roleid:null
 })
 
-defineProps(["roleList"])
+defineProps(["roleList","depList"])
 
 const checkTele = (rule:any,value:any,cb:any)=>{
     const rules = /^(13[0-9]|14[1579]|15[0-3,5-9]|16[6]|17[0123456789]|18[0-9]|19[89])\d{8}$/
