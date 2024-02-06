@@ -1,0 +1,45 @@
+// 引入清除默认样式
+@import './reset.scss';
+
+// //滚动条外观设置
+// ::-webkit-scrollbar {
+//     width: 10px;
+// }
+// // 滚动路径的颜色
+// ::-webkit-scrollbar-track {
+//     background: $base-menu-background;
+// }
+// // 滚动条颜色的设置
+// ::-webkit-scrollbar-thumb{
+//     width: 10px;
+//     background-color: yellowgreen;
+//     border-radius: 10px;
+// }
+
+.el-main{
+    .el-button{
+        margin: 10px 10px 3px 0 !important;
+    }
+}
+
+.el-input{
+    min-width: 100px !important;
+}
+
+@media screen and (max-width: 460px) {
+    .el-header{
+        .headerTitle{
+         display: none;
+        }
+     }
+}
+
+@media screen and (max-width: 650px) {
+    .el-header{
+        .el-button{
+            height: 30px;
+            width: 60px;
+            font-size: 11px;
+        }
+    }
+}
