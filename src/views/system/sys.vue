@@ -8,16 +8,26 @@
         </el-form-item>
         <el-form-item label="系统配置图片" prop="url">
           <!-- <el-input v-model="form.url" /> -->
-          <el-upload class="avatar-uploader" action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <el-upload class="avatar-uploader" action="#"
+            :show-file-list="false" 
+            :before-upload="beforeAvatarUpload"
+            >
+            <el-image fit="contain" v-if="imageUrl" :src="imageUrl" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon">
               <Plus />
             </el-icon>
           </el-upload>
-
         </el-form-item>
       </el-form>
+     <div style="display: flex">
+        <el-upload class="avatar-uploader" action="#"
+            :on-success="handleAvatarSuccess" 
+            :before-upload="beforeAvatarUpload"
+            >
+            <el-button type="primary">更换图片</el-button>
+        </el-upload>
+      <el-button type="success" style="margin-left: 10px !important;" @click="savePic">保存</el-button>
+     </div>
     <!-- </el-card> -->
   </div>
 </template>
@@ -31,7 +41,7 @@ import { ref, reactive, onMounted } from 'vue'
 const ConfigStore = useConfigInfo()
 let form = reactive({
   sysinfo: "",
-  url: ""
+  syslog:<any>File
 })
 const ruler = ref({
   sysinfo: [
@@ -41,11 +51,8 @@ const ruler = ref({
 
 const imageUrl = ref('')
 
-const handleAvatarSuccess: UploadProps['onSuccess'] = (
-  response: any,
-  uploadFile: any
-) => {
-  imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+const handleAvatarSuccess = (res:any, file:any)=>{
+  console.log(res,file);
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (file) => {
@@ -59,15 +66,24 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (file) => {
         return false
       }
       imageUrl.value = URL.createObjectURL(file);
-      console.log(imageUrl.value);
-      ElMessage.success('更换头像成功!')
+      form.syslog = file
       return isImage;
+}
+
+const savePic = async ()=>{
+  if(form.syslog instanceof Function) ElMessage.error('请先上传图片文件!')
+ else{
+    const result = await ConfigStore.updataConfig(form)
+    ElMessage({
+      type: result && result.msg === '已保存' ? 'success' : 'error',
+      message: result.msg
+    })
+  }
 }
 
 onMounted(async ()=>{
    const result = (await ConfigStore.getConfig()).data
    form.sysinfo = result.sysinfo
-   console.log(result);
    imageUrl.value = result.url
 })
 </script>
@@ -79,5 +95,11 @@ onMounted(async ()=>{
   justify-content: center;
   height: 100%;
   width: 100%;
+  flex-direction: column;
+}
+
+.avatar{
+  height: 500px;
+  width: 500px;
 }
 </style>

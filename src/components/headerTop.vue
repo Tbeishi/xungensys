@@ -23,7 +23,7 @@
   <el-dialog v-model="dialogVisible" title="修改密码" width="500" :before-close="handleClose">
     <el-form :model="form" label-width="120px" :rules="rules" ref="Registerform">
       <el-form-item label="修改密码" prop="password">
-        <el-input v-model="form.password" />
+        <el-input v-model="form.password" show-password/>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -39,7 +39,6 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-
 import { computed, ref, reactive, watch, watchEffect } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 const $router = useRouter()

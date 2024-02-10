@@ -102,11 +102,15 @@ const getData = async (data: any) => {
     let depList = data.departmentid
     const list = (await RoleStore.getRole()).data.info_list
     const list2 = (await depInfo.getDep()).data.info_list
-    roleList =  roleList.map((item:any)=>
-      list.find((info:any)=>info.rolename === item).roleid
+    roleList =  roleList.map((item:any)=>{
+      const res = list.find((info:any)=>info.rolename === item)
+      return res ? res.roleid : ''
+     }
     )
-    depList = depList.map((item:any)=>
-      list2.find((info:any)=>info.departmentname === item).departmentid
+    depList = depList.map((item:any)=>{
+      const res2 = list2.find((info:any)=>info.departmentname === item) 
+      return res2 ? res2.departmentid : ''
+     }
     )
     form.roleid = roleList || null
     form.departmentid = depList || null

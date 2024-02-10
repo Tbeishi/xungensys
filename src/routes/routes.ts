@@ -202,15 +202,6 @@ export const asnycRoute = [
         },
       },
       {
-        path: '/system/user',
-        component: () => import('@/views/system/personalCenter.vue'),
-        name: 'user',
-        meta: {
-          title: '个人中心',
-          hidden: true,
-        },
-      },
-      {
         path: '/system/sys',
         component: () => import('@/views/system/sys.vue'),
         name: 'sys',
