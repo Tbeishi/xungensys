@@ -18,15 +18,12 @@
     >
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column label="编号" align="center" prop="id" show-overflow-tooltip></el-table-column>
-      <el-table-column label="检查项目名称" align="center" prop="proname" show-overflow-tooltip></el-table-column>
-      <el-table-column label="检查项目类型" align="center" prop="protype" show-overflow-tooltip></el-table-column>
-      <el-table-column label="是否必填" align="center" show-overflow-tooltip>
-        <template #default="scope">
-          <span>{{ scope.row.required === 0 ? '是' : '否' }}</span>
-        </template>
+      <el-table-column label="项目名称" align="center" prop="name" show-overflow-tooltip></el-table-column>
+      <el-table-column label="检查项" align="center" prop="checkitem" show-overflow-tooltip>
+        <el-table-column label="检查项名称" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column label="类型" align="center" show-overflow-tooltip></el-table-column>
       </el-table-column>
-      <el-table-column label="所属部门" align="center" prop="department" show-overflow-tooltip></el-table-column>
-      <el-table-column label="所属人员" align="center" prop="personnel" show-overflow-tooltip></el-table-column>
+      <el-table-column label="备注" align="center" prop="note" show-overflow-tooltip></el-table-column>
     </el-table>
 
     <el-pagination
@@ -65,15 +62,20 @@ const curData = ref(null)
 
 // 动态绑定弹窗组件
 const dotsDialogRef = ref();
-// 获取所有的巡检点
-const getDots = async () => {
-  // 调用仓库中的方法获取所有的巡检点
-  let result = await checkStore.getItem()
-  getDotsRef.value = result.data.item_list
-  PageData.total = result.data.item_list.length
+// 获取所有的检查项目
+const getItems = async () => {
+  const data = {
+    pagesize: PageData.pageSize, //pagenum代表每一页多少条数据
+    pagenum: PageData.currentPage  //pagenum代表第几页数据
+  }
+  // 调用仓库中的方法获取所有的检查项目
+  let result = await checkStore.getItem(data)
+  console.log(result);
+  // getDotsRef.value = result.data.item_list
+  // PageData.total = result.data.item_list.length
   tableData.value = getDotsRef.value.slice((PageData.currentPage - 1) * PageData.pageSize, PageData.currentPage * PageData.pageSize)
 }
-// 增加测试点
+// 增加
 const addDots = (form:Object) => {
   // getDots()
   console.log(form);
@@ -81,7 +83,7 @@ const addDots = (form:Object) => {
   tableData.value.push(form)
 }
 
-// 打开新增巡检点页面--dialog
+// 打开新增检查项目页面--dialog
 const onAddDots = (type: string) => {
   dotsDialogRef.value.openDialog(type,curData.value);
 };
@@ -117,7 +119,7 @@ const sizeHandle = (pageSize: number)=>{
   tableData.value = getDotsRef.value.slice(( PageData.currentPage - 1) * pageSize,  PageData.currentPage * pageSize)
 }
 onMounted(() => {
-  getDots()
+  getItems()
 })
 
 
@@ -128,5 +130,9 @@ onMounted(() => {
   position: absolute;
   margin-top: 30px;
   bottom: 10px;
+}
+
+::v-deep(.el-table thead.is-group th.el-table__cell){
+  background-color: #ffffff;
 }
 </style>

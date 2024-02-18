@@ -83,15 +83,13 @@ const onSubmit = async () => {
     if (valid) {
       console.log('点击提交信息事件被触发了中的form表单', form);
       let result: any = dialogs.title === '修改部门信息' ? await depInfo.putDep(form) : await depInfo.postDep(form)
-      if (result.code === "200") {
         ElMessage({
-          message: dialogs.title === '修改部门信息' ? '修改部门信息成功!' : '添加修改部门信息!',
-          type: 'success',
+          message: result && result.msg,
+          type: result && result.code === "200" ?'success' : 'error',
         })
         dialogs.isShowDialog = false;
         emit('depDialog-click')
       }
-    }
   })
 };
 // 暴露变量

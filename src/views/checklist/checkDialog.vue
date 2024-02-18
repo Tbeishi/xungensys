@@ -3,35 +3,27 @@
     <div>
         <el-dialog :title="dialogs.title" v-model="dialogs.isShowDialog" @close="closeDialog" width="769px">
             <el-form :model="form" label-width="120px" :rules="ruler" ref="Registerform">
-                <el-form-item label="检查项目名称" prop="proname">
-                    <el-input v-model="form.proname" />
+                <el-form-item label="项目名称" prop="name">
+                    <el-input v-model="form.name" />
                 </el-form-item>
-                <el-form-item label="检查项目类型" prop="protype">
-                    <el-input v-model="form.protype" />
+                <el-form-item prop="protype">
+                  <template #default>
+                    <el-collapse width="80%">
+                      <el-collapse-item title="检查项" name="1">
+                        <template #default>
+                          <el-table border 
+                            style="width: 100%;
+                            margin: 10px 0px" >
+                            <el-table-column label="检查项名称" align="center"></el-table-column>
+                            <el-table-column label="类型" align="center"></el-table-column>
+                          </el-table>
+                        </template>
+                      </el-collapse-item>
+                    </el-collapse>
+                  </template>
                 </el-form-item>
-                <el-form-item label="是否必填" prop="required">
-                    <el-radio-group v-model="form.required">
-                          <el-radio :label="0">是</el-radio>
-                          <el-radio :label="1">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="所属部门" prop="department">
-                    <el-select
-                          v-model="form.department"
-                          class="m-2"
-                          placeholder="请选择所属部门"
-                          style="width: 100%"
-                      >
-                          <el-option
-                          v-for="item in ['安保部','后勤部','技术部']"
-                          :key="item"
-                          :label="item"
-                          :value="item"
-                          />
-                      </el-select>
-                </el-form-item>
-                <el-form-item label="所属人员" prop="personnel">
-                    <el-input v-model="form.personnel" />
+                <el-form-item label="备注">
+                    <el-input v-model="form.note" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -57,19 +49,15 @@
   // const dialogs = ref(false)
   const form = reactive({
     id:'',
-    proname: '',   
-    protype: '',  
-    required: '',   
-    department: '',  
-    personnel: '',    
+    name: '',   
+    protype: '', 
+    note:'' 
   })
   const setData = (e:any)=>{
    form.id = e.id || ''
-   form.proname = e.proname || ''
+   form.name = e.name || ''
    form.protype = e.protype || ''
-   form.required = e.required || ''
-   form.department = e.department || ''
-   form.personnel = e.personnel || ''
+   form.note = e.personnel || ''
   }
   
   // 弹窗的标题和底部的按钮 --- 动态绑定
@@ -104,20 +92,11 @@
     closeDialog();
   };
   const ruler = ref({
-    proname: [
+    name: [
         { required: true, message: '检查项目名称不能为空', trigger: 'blur' }
     ],
     protype: [
         { required: true, message: '检查项目类型不能为空', trigger: 'blur' }
-    ],
-    required: [
-        { required: true, message: '不能为空', trigger: 'blur' }
-    ],
-    department: [
-        { required: true, message: '所属部门不能为空', trigger: 'blur' }
-    ],
-    personnel: [
-        { required: true, message: '所属人员不能为空', trigger: 'blur' }
     ]
   })
   
@@ -154,7 +133,14 @@
   <style scoped lang="scss">
   ::v-deep(.el-dialog ){
     width: 30vw;
+    min-width: 500px !important;
   }
+
+  ::v-deep(.el-dialog__body){
+    padding: 10px 30px;
+    width: 40vw;
+    min-width: 500px !important;
+}
   
   ::v-deep(.el-form-item__label){
     flex: 0 0 120px
@@ -163,6 +149,11 @@
   ::v-deep(.el-dialog__body){
     padding: 10px 30px;
     width: 28vw;
+  }
+
+  ::v-deep(.el-form-item__content){
+    display: block;
+    margin: 0 30px !important;
   }
   </style>
   

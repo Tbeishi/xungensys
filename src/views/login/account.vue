@@ -48,22 +48,18 @@ const onSignIn = async () => {
   loginForms.value.validate(async (valid: any) => {
     if (valid) {
       let result = await userInfo.loginIn(loginForm.telephone, loginForm.password)
-      console.log('account.vue', result);
-
       // 登录成功之后存储token
-      if (result.code === '200') {
+      if (result && result.code === '200') {
         localStorage.setItem('token', result.data.token)
         // 当我点击登录之后进行路由跳转的时候携带对应的参数 
         router.push({ path: '/system/usermanager' })
-        console.log('跳转页面成功', loginForm.telephone);
-
         ElMessage({
           message: result.msg,
           type: 'success',
         })
       } else {
         ElMessage({
-          message: result.msg,
+          message: result ? result.msg : '登录失败！',
           type: 'error',
         })
       }

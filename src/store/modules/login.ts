@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
 import { reqLogin, reqChangePas } from '../../api/login'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 // const router = useRouter()
 export const useUserInfo = defineStore('userInfo', {
   state: () => ({
@@ -11,7 +9,7 @@ export const useUserInfo = defineStore('userInfo', {
   actions: {
     async loginIn(telephone: any, password: any) {
       let result = await reqLogin(telephone, password)
-      if (result.code === '200') {
+      if (result && result.code === '200') {
         ;(this.telephone = result.data.telephone),
           (this.password = result.data.password)
       }

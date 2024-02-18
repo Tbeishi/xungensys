@@ -13,8 +13,7 @@
     <!-- :data="perMessage" 获取数据之后才能动态绑定 @selection-change="selectionData"-->
     <el-table style="margin: 10px 0px" border :data="tableData" ref="tableRef">
       <!-- <el-table-column type="selection" align="center"></el-table-column> -->
-      <el-table-column label="部门编号" align="center" prop="departmentid" show-overflow-tooltip
-        width="55px"></el-table-column>
+      <el-table-column label="部门编号" align="center" prop="departmentid" show-overflow-tooltip></el-table-column>
       <el-table-column label="部门名称" align="center" prop="departmentname" show-overflow-tooltip></el-table-column>
       <el-table-column label="备注" align="center" prop="note" show-overflow-tooltip></el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
@@ -42,7 +41,7 @@ import depDialog from './depDialog.vue'
 //分页数据
 const PageData = reactive({
   currentPage: 1,
-  pageSize: 11,
+  pageSize: 10,
   total: 0,
 })
 // 这里定义一个数组来存储获取巡检点之后后端返回的数据
