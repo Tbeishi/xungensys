@@ -37,7 +37,7 @@ const goRoute = (item:any,name:any) => {
 <style scoped lang="scss">
 .iconfont {
   font-size: 20px;
-  margin-right: 5px;
+  margin-right: 10px;
   flex: 0 0 20px;
 }
 
