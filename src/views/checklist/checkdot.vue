@@ -4,7 +4,7 @@
     <el-button type="primary" size="default" @click="onAddDots('add')">增加</el-button>
     <!-- 这里需要传入一个参数就是对应的id  -->
     <el-tooltip content="请先选择数据!" :disabled="!isButtonDisabled" effect="light" placement="top">
-    <el-button type="primary" size="default" :disabled="isButtonDisabled">删除</el-button>
+    <el-button type="primary" size="default" :disabled="isButtonDisabled" @click="delItems">删除</el-button>
     </el-tooltip>
     <el-tooltip content="请先选择数据!" :disabled="!isButtonDisabled" effect="light" placement="top">
     <el-button type="primary" size="default" @click="onChange('edit')" :disabled="isButtonDisabled">修改</el-button>
@@ -20,7 +20,11 @@
       <el-table-column label="编号" align="center" prop="id" show-overflow-tooltip></el-table-column>
       <el-table-column label="项目名称" align="center" prop="name" show-overflow-tooltip></el-table-column>
       <el-table-column label="检查项" align="center" prop="checkitem" show-overflow-tooltip>
-        <el-table-column label="检查项名称" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column label="检查项名称" align="center" show-overflow-tooltip>
+          <template #default="{ row }">
+            <span v-for="item in row.checkitem" :key="item.itemname">{{item.itemname}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="类型" align="center" show-overflow-tooltip></el-table-column>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="note" show-overflow-tooltip></el-table-column>
@@ -69,18 +73,23 @@ const getItems = async () => {
     pagenum: PageData.currentPage  //pagenum代表第几页数据
   }
   // 调用仓库中的方法获取所有的检查项目
-  let result = await checkStore.getItem(data)
-  console.log(result);
+  let result = (await checkStore.getItem(data)).data.info_list
+  getDotsRef.value = result
+  
+var str = '{"error":1,"data":"用户不存在"}';
+var str2 = '{"itemname": "item1", "type": "choice"}'
+  // const res = JSON.stringify(result[0].checkitem[0])
+  // console.log(res);
+  
+  console.log(JSON.parse(str2));
+  
   // getDotsRef.value = result.data.item_list
   // PageData.total = result.data.item_list.length
   tableData.value = getDotsRef.value.slice((PageData.currentPage - 1) * PageData.pageSize, PageData.currentPage * PageData.pageSize)
 }
 // 增加
-const addDots = (form:Object) => {
-  // getDots()
-  console.log(form);
-  
-  tableData.value.push(form)
+const addDots = () => {
+  getItems()
 }
 
 // 打开新增检查项目页面--dialog
@@ -91,16 +100,17 @@ const onAddDots = (type: string) => {
 const onChange = (type: string) => {
   dotsDialogRef.value.openDialog(type,curData.value);
 };
+
 // 删除
-// const delDots = async () => {
-//   if(curData.value){
-//   let result = await dotsStore.delDots(curData.value['id'])  
-//   ElMessage({ 
-//     message: result ? '删除成功！' : '删除失败！',
-//     type: result ? 'success' : 'error'})
-//     getDots()
-//   }
-// }
+const delItems = async () => {
+  if(curData.value){
+  let result = await checkStore.delItem(curData.value['id'])  
+  ElMessage({ 
+    message: result ? result.msg : '删除失败',
+    type: result && result.code === '200' ? 'success' : 'error'})
+    getItems()
+  }
+}
 
 //选中表格数据
 const selectionData = (rows:any)=>{
