@@ -28,7 +28,7 @@
                             <template #default="{ row,$index }">
                               <el-form ref="inputform1" :model="inputData" label-width="120px" :rules="ruler" v-if="inputData.index === $index">
                                 <el-form-item prop="itemname" label-width="0">
-                                  <el-input autofocus @blur="handleBlur($index,1)" v-model="inputData.itemname" style="padding: 0 10px"/>
+                                  <el-input @blur="handleBlur($index,1)" v-model="inputData.itemname" style="padding: 0 10px"/>
                                 </el-form-item>
                               </el-form>
                               <span v-else>{{ row.itemname }}</span>
@@ -38,7 +38,7 @@
                             <template #default="{ row,$index }">
                               <el-form ref="inputform2" :model="inputData" label-width="120px" :rules="ruler" v-if="inputData.index === $index">
                                 <el-form-item prop="type" label-width="0">
-                                  <el-input autofocus @blur="handleBlur($index,2)" v-model="inputData.type" style="padding: 0 10px"/>
+                                  <el-input @blur="handleBlur($index,2)" v-model="inputData.type" style="padding: 0 10px"/>
                                 </el-form-item>
                               </el-form>
                               <span v-else>{{ row.type }}</span>
@@ -85,11 +85,12 @@
   // const dialogs = ref(false)
   const inputform1 = ref()
   const inputform2 = ref()
-  const Boolflag = ref(false)
-  const form = reactive({
+  const Boolflag1 = ref(false)
+  const Boolflag2 = ref(false)
+
+  const form :{ name:string,checkitem:{itemname:string,type:string}[],note:string } = reactive({
     name: '',   
-    checkitem: [
-    ], 
+    checkitem: [], 
     note:'',
   })
 
@@ -122,7 +123,6 @@
     //     dialogs.submitTxt = '新 增';
     //     setData('') 
     // }
-    console.log(66);
     dialogs.isShowDialog = true;
   };
   // 关闭弹窗
@@ -146,45 +146,57 @@
     ],
   })
 
-  const validateForm = (flag:any)=>{
-    if(flag === 1){
-      inputform1.value.validate(async(valid:any)=>{
+  const validateForm1 = async ()=>{
+      await inputform1.value.validate((valid:any)=>{
         if(valid){
-          console.log('1通过');
-          Boolflag.value = true
+          Boolflag1.value = true;
         }
         else{
-          Boolflag.value = false
+          Boolflag1.value = false;
         }
       })
     }
-      else{
-        inputform2.value.validate(async(valid:any)=> {
+  
+    const validateForm2 = async ()=>{
+      await inputform2.value.validate((valid:any)=> {
           if(valid){
-            console.log('2通过');
-            Boolflag.value = true;
+            Boolflag2.value = true;
           }
           else{
-            Boolflag.value = false
+            Boolflag2.value = false;
           }
         })
-      }
     }
 
-  const handleBlur = (index:any,flag:any)=>{
-    flag === 1 ? validateForm(1) : validateForm(2)
-    if(Boolflag.value){
+  const handleBlur = async(index:any,flag:any)=>{
+    flag === 1 ? await validateForm1() : await validateForm2()
+    if(Boolflag2.value && Boolflag1.value){
       inputData.index = -1
-      form.checkitem[index].itemname = inputData.itemname
-      form.checkitem[index].type = inputData.type
+      if(form.checkitem[index]){
+        form.checkitem[index].itemname = inputData.itemname
+        form.checkitem[index].type = inputData.type
+      }
+    }
+    else{
+      Boolflag2.value ? await validateForm1() : await validateForm2()
     }
   }
 
-  const addData = ()=>{
+  const addData = async()=>{
+    Boolflag1.value = false 
+    Boolflag2.value = false 
+    const index = form.checkitem.findIndex((item:any)=> item.itemname === '' && item.type === '')
+    if(index !== -1  && inputData.itemname && inputData.type) {
+      inputData.index = index
+      inputData.itemname = ''
+      inputData.type = ''
+      await validateForm1();
+      await validateForm2();
+    };
     if(inputform2.value && inputform1.value){
-      validateForm(1);
-      validateForm(2);
-      if(Boolflag.value){
+      await validateForm1();
+      await validateForm2();
+      if(Boolflag1.value && Boolflag2.value){
         form.checkitem.push({
           itemname:'',
           type:'',
@@ -221,7 +233,12 @@
   // 提交
   const onSubmit = async () => {
     Registerform.value.validate(async(valid:any)=>{
-        if(valid){
+        const res = form.checkitem.find((item:any)=> item.itemname === '' && item.type === '')
+        if(res !== undefined) {
+          await validateForm1();
+          await validateForm2();
+        };
+        if(valid && Boolflag1.value && Boolflag2.value){
             let result = await checkStore.addItem(form)
             emit('dotsDialog-click')
             ElMessage({
