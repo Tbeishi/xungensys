@@ -22,10 +22,14 @@
       <el-table-column label="检查项" align="center" prop="checkitem" show-overflow-tooltip>
         <el-table-column label="检查项名称" align="center" show-overflow-tooltip>
           <template #default="{ row }">
-            <span v-for="item in row.checkitem" :key="item.itemname">{{item.itemname}}</span>
+            <span v-for="item in row.checkitem" :key="item.itemname">{{item.itemname}}&nbsp;</span>
           </template>
         </el-table-column>
-        <el-table-column label="类型" align="center" show-overflow-tooltip></el-table-column>
+        <el-table-column label="类型" align="center" show-overflow-tooltip>
+          <template #default="{ row }">
+            <span v-for="item in row.checkitem" :key="item.itemname">{{item.type}}&nbsp;</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="note" show-overflow-tooltip></el-table-column>
     </el-table>
@@ -74,17 +78,9 @@ const getItems = async () => {
   }
   // 调用仓库中的方法获取所有的检查项目
   let result = (await checkStore.getItem(data)).data.info_list
+  result.forEach((items:any)=> items.checkitem = items.checkitem.map((item:any)=> eval("(" + item + ")")))
   getDotsRef.value = result
-  
-var str = '{"error":1,"data":"用户不存在"}';
-var str2 = '{"itemname": "item1", "type": "choice"}'
-  // const res = JSON.stringify(result[0].checkitem[0])
-  // console.log(res);
-  
-  console.log(JSON.parse(str2));
-  
-  // getDotsRef.value = result.data.item_list
-  // PageData.total = result.data.item_list.length
+  // tableData.value = getDotsRef.value
   tableData.value = getDotsRef.value.slice((PageData.currentPage - 1) * PageData.pageSize, PageData.currentPage * PageData.pageSize)
 }
 // 增加

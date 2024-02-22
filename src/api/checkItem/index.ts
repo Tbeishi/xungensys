@@ -14,7 +14,7 @@ export const addItemData = (data:any) => {
 
 //跟新数据
 export const updItemData = (data:any) => {
-  return requestJS.post<any, any>(API.GET_ZHUHU, data)
+  return requestJS.put<any, any>(API.GET_ZHUHU, data)
 }
 
 //删除数据

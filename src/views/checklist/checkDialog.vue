@@ -88,7 +88,8 @@
   const Boolflag1 = ref(false)
   const Boolflag2 = ref(false)
 
-  const form :{ name:string,checkitem:{itemname:string,type:string}[],note:string } = reactive({
+  const form :{ id:string, name:string,checkitem:{itemname:string,type:string}[],note:string } = reactive({
+    id:'',
     name: '',   
     checkitem: [], 
     note:'',
@@ -100,8 +101,9 @@
     type:''
   })
   const setData = (e:any)=>{
+   form.id = e.id || ''
    form.name = e.name || ''
-   form.checkitem = e.checkitem || null
+   form.checkitem = e.checkitem || []
    form.note = e.note || ''
   }
   
@@ -114,15 +116,15 @@
   })
   // 打开弹窗
   const openDialog = (type: string,e: Object) => {
-    // if (type === 'edit') {
-    //     dialogs.title = '修改检查项目';
-    //     dialogs.submitTxt = '修 改';
-    //     setData(e) 
-    // } else {
-    //     dialogs.title = '添加检查项目';
-    //     dialogs.submitTxt = '新 增';
-    //     setData('') 
-    // }
+    if (type === 'edit') {
+        dialogs.title = '修改检查项目';
+        dialogs.submitTxt = '修 改';
+        setData(e) 
+    } else {
+        dialogs.title = '添加检查项目';
+        dialogs.submitTxt = '新 增';
+        setData('') 
+    }
     dialogs.isShowDialog = true;
   };
   // 关闭弹窗
@@ -238,14 +240,22 @@
           await validateForm1();
           await validateForm2();
         };
-        if(valid && Boolflag1.value && Boolflag2.value){
-            let result = await checkStore.addItem(form)
+        if(valid){
+        if(form.checkitem.length === 0){
+          ElMessage({
+            message: '请添加检查项',
+            type: 'error',
+          })
+        }
+        if(Boolflag1.value && Boolflag2.value || dialogs.title === '修改检查项目'){
+          let result =  dialogs.title === '修改检查项目' ? await checkStore.updItem(form) : await checkStore.addItem(form)
             emit('dotsDialog-click')
             ElMessage({
-                message: result ? result.msg : '添加失败',
+                message: result ? result.msg : '操作失败',
                 type: result && result.code === '200' ? 'success' : 'error',
             })
             closeDialog()
+        }
     }})
   };
 
